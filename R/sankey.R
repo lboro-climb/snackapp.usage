@@ -13,8 +13,8 @@ create_sankey <- function(data){
     dplyr::filter(Event == "viewed-screen" | Event == "app-state-changed") %>%
     dplyr::mutate(
       date = as.POSIXct(Date),
-      Metric = dplyr::if_else(str_detect(Metric, "planner"), "planner", Metric),
-      Metric = dplyr::if_else(word(Metric, sep = "-") == "my", str_sub(Metric, start = 1, end = 8), word(Metric, sep = "-")),
+      Metric = dplyr::if_else(stringr::str_detect(Metric, "planner"), "planner", Metric),
+      Metric = dplyr::if_else(stringr::word(Metric, sep = "-") == "my", stringr::str_sub(Metric, start = 1, end = 8), stringr::word(Metric, sep = "-")),
       Goal.Is.Automatic.Set = NULL,
       Goal.Value.Set = NULL,
       active = dplyr::if_else(Metric == "active", 1, 0)
@@ -25,7 +25,7 @@ create_sankey <- function(data){
   list_data <- split(viewed_screen, cumsum(viewed_screen$active == 1))
 
   flowlines <- lapply(list_data, "[", "Metric")
-  flowlines <- purrr::map(flowlines, filter, Metric == "dashboard" | Metric == "my-stats" | Metric == "my-goals" | 
+  flowlines <- purrr::map(flowlines, dplyr::filter, Metric == "dashboard" | Metric == "my-stats" | Metric == "my-goals" | 
                             Metric == "profile" | Metric == "forums" | Metric == "faq" | Metric == "planner")
 
   flowlines <- purrr::map(flowlines, t)

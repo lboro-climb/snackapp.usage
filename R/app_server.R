@@ -264,7 +264,7 @@ app_server <- function( input, output, session ) {
   
   output$n_fail <- shiny::renderText({
     x <- 0
-    if (sa_qaqc()$length_check == 2 | sa_qaqc()$colname_check == 2) {
+    if (sa_qaqc()$length_check == 2 || sa_qaqc()$colname_check == 2) {
       x <- x + 1
     } else {
       x <- x
@@ -359,7 +359,7 @@ app_server <- function( input, output, session ) {
                       "Error", "ID", "Event start", "Event end", "Time difference (sec)",
                       "Event", "Metric"
                     )) %>%
-      DT::formatStyle(columns = 1, target = "row", backgroundColor = styleEqual(c(1, 2), c("orange", "red")))
+      DT::formatStyle(columns = 1, target = "row", backgroundColor = DT::styleEqual(c(1, 2), c("orange", "red")))
   )
   
   output$qaqc_summary <- shiny::renderTable(
@@ -445,9 +445,9 @@ app_server <- function( input, output, session ) {
       ggplot2::scale_y_log10(labels = scales::comma) +
       ggplot2::xlab("") +
       ggplot2::ylab("Log time(sec)") +
-      ggplot2::theme(axis.text.x = element_text(angle = 90))
+      ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90))
     
-    plotly::style(ggplotly(a, tooltip = "text"), hoverinfo = "text")
+    plotly::style(plotly::ggplotly(a, tooltip = "text"), hoverinfo = "text")
   })
   
   output$group_treemap <- shiny::renderPlot({
@@ -456,8 +456,8 @@ app_server <- function( input, output, session ) {
       area = log(average), fill = metric,
       label = paste0(metric, "\n", "Value: ", round((average / 60), digits = 2), " mins")
     )) +
-      ggplot2::geom_treemap(show.legend = FALSE) +
-      ggplot2::geom_treemap_text(colour = "white") +
+      treemapify::geom_treemap(show.legend = FALSE) +
+      treemapify::geom_treemap_text(colour = "white") +
       ggplot2::ggtitle("Treemap of average app usage per participant")
   })
   
@@ -467,15 +467,15 @@ app_server <- function( input, output, session ) {
       area = log(average), fill = metric,
       label = paste0(metric, "\n", "Value: ", round((average / 60), digits = 2), " mins")
     )) +
-      ggplot2::geom_treemap(show.legend = FALSE) +
-      ggplot2::geom_treemap_text(colour = "white") +
+      treemapify::geom_treemap(show.legend = FALSE) +
+      treemapify::geom_treemap_text(colour = "white") +
       ggplot2::ggtitle("Treemap of average app usage per participant")
   })
   
   output$line_chart <- plotly::renderPlotly({
     ggplot2::ggplot(line_chart(), ggplot2::aes(x = day, y = value, fill = metric)) +
       ggplot2::geom_col(position = "dodge", alpha = 0.6) +
-      ggplot2::geom_line(aes(y = roll_mean, colour = metric), size = 2) +
+      ggplot2::geom_line(ggplot2::aes(y = roll_mean, colour = metric), size = 2) +
       ggplot2::ylab("Time (sec)")
   })
   
@@ -543,9 +543,9 @@ app_server <- function( input, output, session ) {
       ggplot2::scale_y_log10(labels = scales::comma) +
       ggplot2::xlab("") +
       ggplot2::ylab("Log time(sec)") +
-      ggplot2::theme(axis.text.x = element_text(angle = 90))
+      ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90))
     
-    plotly::style(ggplotly(b, tooltip = "text"), hoverinfo = "text")
+    plotly::style(plotly::ggplotly(b, tooltip = "text"), hoverinfo = "text")
   })
   
   output$participant_sankey <- highcharter::renderHighchart({
