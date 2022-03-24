@@ -16,7 +16,7 @@ load_fb_data <- function(path, name) {
     setNames(substr(name, 22, 23)) %>%
     dplyr::bind_rows(.id = "id") %>%
     dplyr::mutate(
-      event_start = lubridate::parse_date_time(Date, orders = "dmYHMOS")
+      event_start = lubridate::parse_date_time(Date, orders = "YmdHMOS")
     ) %>%
     dplyr::select(-`Date`) %>%
     dplyr::relocate(id, event_start, Metric, Record)

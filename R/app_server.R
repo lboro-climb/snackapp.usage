@@ -206,16 +206,10 @@ app_server <- function( input, output, session ) {
   })
   
   # fitbit usage data
-  
+
   shiny::observeEvent(input$run_fb_usage_analysis, {
     rv$fb_usage_data <- load_fb_data(path = input$fb_usage_data$datapath, name = input$fb_usage_data$name)
-  })
-  
-  shiny::observeEvent(input$run_fb_usage_analysis, {
     rv$fb_usage_qaqc <- fb_usage_full_qaqc(rv$fb_usage_data)
-  })
-  
-  shiny::observeEvent(input$run_fb_usage_analysis, {
     rv$fb_participant_summary <- fb_usage_participant_summary(data = rv$fb_usage_qaqc)
     rv$fb_daily_summary <- fb_usage_day_summary(data = rv$fb_usage_qaqc)
   })
@@ -402,7 +396,7 @@ app_server <- function( input, output, session ) {
                     ), options = list(
                       autoWidth = FALSE, scrollX = TRUE
                     ), filter = "top") %>%
-      DT::formatStyle(columns = 5, target = "row", backgroundColor = styleEqual(c(TRUE), c("red")))
+      DT::formatStyle(columns = 5, target = "row", backgroundColor = DT::styleEqual(c(TRUE), c("red")))
   )
   
   output$fb_nudge <- DT::renderDataTable(

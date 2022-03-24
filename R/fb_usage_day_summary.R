@@ -48,7 +48,7 @@ fb_usage_day_summary <- function(data) {
       bouted_watch_max_time = max(diff, na.rm = TRUE)
     )
   summary4 <- data %>%
-    group_by(id, year, month, day) %>%
+    dplyr::group_by(id, year, month, day) %>%
     dplyr::summarise(
       n_activity_snack_prompt = sum(Metric == "activity-snack-prompt"),
       n_activity_snack_prompt_heeded = sum(Metric == "nudge-heedology-prompt")
