@@ -15,7 +15,7 @@ The goal of snackapp.usage is to provide code to analyse data pulled from the Sn
 You can install the released version of snackapp.usage from [Github](https://github.com/lboro-climb/snackapp.usage/) with:
 
 ``` r
-remotes::install.github("lboro-climb/snackapp.usage")
+remotes::install_github("lboro-climb/snackapp.usage")
 library(snackapp.usage)
 ```
 
