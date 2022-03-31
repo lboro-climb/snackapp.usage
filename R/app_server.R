@@ -257,13 +257,9 @@ app_server <- function( input, output, session ) {
   })
   
   output$n_fail <- shiny::renderText({
-    x <- 0
-    if (sa_qaqc()$length_check == 2 || sa_qaqc()$colname_check == 2) {
-      x <- x + 1
-    } else {
-      x <- x
-    }
-    return(x)
+    sa_qaqc() %>%
+      dplyr::filter(length_check == 2 | colname_check == 2 | active_background_check == FALSE) %>%
+      length()
   })
   
   # fb usage info boxes
