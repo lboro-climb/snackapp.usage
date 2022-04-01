@@ -19,6 +19,7 @@ dataload_qaqc <- function(path, name){
   colname_check <- list()
   active_background_check <- list()
   active_background_position <- list()
+  background_inactive_swap <- list()
 
   # extract the column names from each dataframe
   for(i in seq_along(list_data)){
@@ -56,10 +57,26 @@ dataload_qaqc <- function(path, name){
       }
     active_background_check[[i]] <- all(data$Metric == data$metric_check)
     active_background_position[[i]] <- min(which((data$Metric == data$metric_check) == FALSE))
-    }
+  }
+  
+  # background inactive swap
+  
+  for(i in 1:length(list_data)) {
+    data <- list_data[[i]] %>%
+      dplyr::filter(Event == "app-state-changed") %>%
+      dplyr::select(Metric) %>%
+      dplyr::mutate(
+        background_flag = dplyr::lag(dplyr::if_else(Metric == "background", 1, 0)),
+        inactive_flag = dplyr::if_else(Metric == "inactive", 1, 0),          
+        error = dplyr::if_else(background_flag == 1 & inactive_flag == 1, 1, 0)
+      ) 
+      
+     background_inactive_swap <- sum(data$error, na.rm = TRUE)
+      
+  }
 
   sa_qaqc <- data.frame(name = name) %>%
-    cbind(unlist(length_check), unlist(colname_check), unlist(active_background_check), unlist(active_background_position))
-  colnames(sa_qaqc) <- c("name", "length_check", "colname_check", "active_background_check", "active_background_position")
+    cbind(unlist(length_check), unlist(colname_check), unlist(active_background_check), unlist(active_background_position), unlist(background_inactive_swap))
+  colnames(sa_qaqc) <- c("name", "length_check", "colname_check", "active_background_check", "active_background_position", "background_inactive_swap")
   return(sa_qaqc)
 }
