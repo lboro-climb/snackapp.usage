@@ -19,7 +19,6 @@ snackapp_usage_daily_sum <- function(data){
   state_change_summary <- df %>%
     dplyr::select(id, date, Event, Metric) %>%
     dplyr::group_by(id) %>%
-    dplyr::filter(Event == "app-state-changed") %>%
     dplyr::mutate(
       date = as.POSIXct(date),
       date_lag = dplyr::lag(date),
@@ -28,7 +27,21 @@ snackapp_usage_daily_sum <- function(data){
       month = lubridate::month(date),
       day = lubridate::day(date)
     ) %>%
-    dplyr::filter(Metric == "background")
+    dplyr::filter(Metric != "active")
+  
+  ## inactive flag sum - iphone ## 
+  
+  inactive <- df %>%
+    dplyr::group_by(id, year, month, day) %>%
+    dplyr::mutate(
+      inactive_flag = dplyr::lag(dplyr::if_else(Metric == "inactive", 1, 0))
+    ) %>%
+    dplyr::filter(inactive_flag == 1) %>% 
+    dplyr::summarise(
+      inactive_total_time = sum(as.numeric(diff), na.rm = TRUE)
+      )
+
+  ##  subtract sum of diff when flagged from total_time ##
 
   state_change_summary <- state_change_summary %>%
     dplyr::group_by(id, year, month, day) %>%
@@ -37,6 +50,12 @@ snackapp_usage_daily_sum <- function(data){
       average_time = as.numeric(mean(diff, na.rm = TRUE)),
       std_dev_time = as.numeric(sd(diff, na.rm = TRUE))
     )
+  
+  state_change_summary <- dplyr::left_join(state_change_summary, inactive) %>%
+    replace(is.na(.), 0) %>%
+    dplyr::mutate(
+      total_time = total_time - inactive_total_time
+    ) 
 
   state_change_summary$id <- as.numeric(state_change_summary$id)
   state_change_summary <- round(state_change_summary, digits = 2)

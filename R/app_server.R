@@ -257,13 +257,9 @@ app_server <- function( input, output, session ) {
   })
   
   output$n_fail <- shiny::renderText({
-    x <- 0
-    if (sa_qaqc()$length_check == 2 || sa_qaqc()$colname_check == 2) {
-      x <- x + 1
-    } else {
-      x <- x
-    }
-    return(x)
+    sa_qaqc() %>%
+      dplyr::filter(length_check == 2 | colname_check == 2 | active_background_check == FALSE) %>%
+      length()
   })
   
   # fb usage info boxes
@@ -310,7 +306,8 @@ app_server <- function( input, output, session ) {
     sa_qaqc() %>%
       dplyr::mutate(
         length_check = dplyr::if_else(length_check == 1, as.character(shiny::icon("ok", lib = "glyphicon")), as.character(shiny::icon("ban-circle", lib = "glyphicon"))),
-        colname_check = dplyr::if_else(colname_check == 1, as.character(shiny::icon("ok", lib = "glyphicon")), as.character(shiny::icon("ban-circle", lib = "glyphicon")))
+        colname_check = dplyr::if_else(colname_check == 1, as.character(shiny::icon("ok", lib = "glyphicon")), as.character(shiny::icon("ban-circle", lib = "glyphicon"))),
+        active_background_check = dplyr::if_else(active_background_check == TRUE, as.character(shiny::icon("ok", lib = "glyphicon")), as.character(shiny::icon("ban-circle", lib = "glyphicon")))
       ),
     escape = FALSE, options = list(autoWidth = FALSE, scrollX = TRUE)
   )

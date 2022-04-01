@@ -17,6 +17,8 @@ dataload_qaqc <- function(path, name){
   x <- list()
   length_check <- list()
   colname_check <- list()
+  active_background_check <- list()
+  active_background_position <- list()
 
   # extract the column names from each dataframe
   for(i in seq_along(list_data)){
@@ -40,9 +42,24 @@ dataload_qaqc <- function(path, name){
       colname_check[i] <- 2
     }
   }
+  
+  # check active background
+  
+  for(i in 1:length(list_data)){
+    data <- list_data[[i]] %>%
+      dplyr::filter(Event == "app-state-changed" & Metric == "active" | Metric == "background")
+    
+      if(dplyr::first(data$Metric) == "active") {
+        data$metric_check <- rep(c("active", "background"), length.out = nrow(data))
+      } else {
+        data$metric_check <- rep(c("background", "active"), length.out = nrow(data))
+      }
+    active_background_check[[i]] <- all(data$Metric == data$metric_check)
+    active_background_position[[i]] <- min(which((data$Metric == data$metric_check) == FALSE))
+    }
 
   sa_qaqc <- data.frame(name = name) %>%
-    cbind(unlist(length_check), unlist(colname_check))
-  colnames(sa_qaqc) <- c("name", "length_check", "colname_check")
+    cbind(unlist(length_check), unlist(colname_check), unlist(active_background_check), unlist(active_background_position))
+  colnames(sa_qaqc) <- c("name", "length_check", "colname_check", "active_background_check", "active_background_position")
   return(sa_qaqc)
 }
