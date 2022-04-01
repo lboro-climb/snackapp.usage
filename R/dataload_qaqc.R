@@ -18,6 +18,7 @@ dataload_qaqc <- function(path, name){
   length_check <- list()
   colname_check <- list()
   active_background_check <- list()
+  active_background_position <- list()
 
   # extract the column names from each dataframe
   for(i in seq_along(list_data)){
@@ -54,10 +55,11 @@ dataload_qaqc <- function(path, name){
         data$metric_check <- rep(c("background", "active"), length.out = nrow(data))
       }
     active_background_check[[i]] <- all(data$Metric == data$metric_check)
+    active_background_position[[i]] <- min(which((data$Metric == data$metric_check) == FALSE))
     }
 
   sa_qaqc <- data.frame(name = name) %>%
-    cbind(unlist(length_check), unlist(colname_check), unlist(active_background_check))
-  colnames(sa_qaqc) <- c("name", "length_check", "colname_check", "active_background_check")
+    cbind(unlist(length_check), unlist(colname_check), unlist(active_background_check), unlist(active_background_position))
+  colnames(sa_qaqc) <- c("name", "length_check", "colname_check", "active_background_check", "active_background_position")
   return(sa_qaqc)
 }
