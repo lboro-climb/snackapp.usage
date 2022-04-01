@@ -10,6 +10,18 @@
 #' @examples
 snackapp_usage_p_sum <- function(data){
     df <- data
+    
+    # filter out app-state-changed unknown
+    
+    df <- df %>%
+      dplyr::filter(Metric != "unknown")
+    
+    # filter data to eliminate onboarding 
+    
+    onboarding <- df %>%
+      dplyr::filter()
+    
+    df <- df 
 
     state_change_summary <- df %>%
       dplyr::select(id, date, Event, Metric) %>%

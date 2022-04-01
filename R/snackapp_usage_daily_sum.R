@@ -10,6 +10,11 @@
 #' @examples
 snackapp_usage_daily_sum <- function(data){
   df <- data
+  
+  # filter out app-state-changed unknown
+  
+  df <- df %>%
+    dplyr::filter(Metric != "unknown")
 
   state_change_summary <- df %>%
     dplyr::select(id, date, Event, Metric) %>%
