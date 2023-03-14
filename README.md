@@ -8,7 +8,7 @@
 [![DOI](https://zenodo.org/badge/426941715.svg)](https://zenodo.org/badge/latestdoi/426941715)
 <!-- badges: end -->
 
-The goal of snackapp.usage is to provide code to analyse data pulled from the Snacktivity SnackApp.
+The goal of snackapp.usage is to provide code to analyse data pulled from the Snacktivity SnackApp. The application can be viewed online [here](https://lboro-climb.shinyapps.io/snackapp-usage/). 
 
 ## Installation
 
